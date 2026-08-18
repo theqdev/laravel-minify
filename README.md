@@ -1,106 +1,137 @@
-# Minify
+# Laravel Minify
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/DevFactoryCH/minify/tests.yml)](https://github.com/DevFactoryCH/minify/actions/workflows/tests.yml)
-[![Latest Stable Version](https://poser.pugx.org/devfactory/minify/v/stable.svg)](https://packagist.org/packages/devfactory/minify)
-[![Total Downloads](https://poser.pugx.org/devfactory/minify/downloads.svg)](https://packagist.org/packages/devfactory/minify)
-[![License](https://poser.pugx.org/devfactory/minify/license.svg)](https://packagist.org/packages/devfactory/minify)
+Laravel Minify combines and minifies CSS and JavaScript files that are served from your Laravel application's `public` directory. It generates a stable, cache-friendly build filename and returns the corresponding HTML tag for use in Blade views.
 
-With this package you can minify your existing stylesheet and JavaScript files for Laravel 10.
-This process can be a little tough, this package simplifies and automates this process.
+## Maintained fork
 
-For Laravel 5 - 9 please use version 1.x of this package.
+This is a maintained fork of [DevFactoryCH/minify](https://github.com/DevFactoryCH/minify), published as [`theqdev/laravel-minify`](https://packagist.org/packages/theqdev/laravel-minify).
 
-For Laravel 4 please use [ceesvanegmond/minify](https://github.com/ceesvanegmond/minify)
+The upstream package enables the CSS minifier's legacy variable processor. That processor is not needed by this project and can interfere with modern native CSS custom properties such as `--brand-color` and `var(--brand-color)`. This fork disables that processor so native CSS custom properties are not interpreted as legacy variable syntax during minification.
+
+The public PHP namespace remains `Devfactory\\Minify` for compatibility with existing applications. This is intentional; use the package name above when installing it with Composer.
+
+## Requirements
+
+- PHP 8.1 or later
+- Laravel 10, 11, 12, or 13
+
+Laravel 13 requires PHP 8.3 or later. The package retains its PHP 8.1 minimum so it can continue to support Laravel 10.
+
+This package minifies already-built CSS and JavaScript. It does not compile Sass, bundle JavaScript modules, or replace Vite, Mix, or another asset build pipeline.
 
 ## Installation
 
-Begin by installing this package through Composer.
+Install the package with Composer:
 
+```shell
+composer require theqdev/laravel-minify
+```
 
-```json
-{
-    "require": {
-        "devfactory/minify": "^2.0"
-    }
+Laravel package discovery registers the service provider and `Minify` facade automatically. If package discovery is disabled, register `Devfactory\\Minify\\MinifyServiceProvider` and the `Devfactory\\Minify\\Facades\\MinifyFacade` facade in your application.
+
+Publish the configuration file if you need to change the defaults:
+
+```shell
+php artisan vendor:publish --provider="Devfactory\\Minify\\MinifyServiceProvider" --tag=config
+```
+
+This creates `config/minify.php`. Make sure the configured build directories exist, or can be created, and are writable by the PHP process in deployed environments.
+
+### Moving from the upstream package
+
+The fork keeps the same namespace, facade name, configuration keys, and Blade API as the upstream v2 package. To replace it in an existing application, remove the upstream Composer package and then require this one:
+
+```shell
+composer remove devfactory/minify
+composer require theqdev/laravel-minify
+```
+
+Review your dependency lock file and run your application test suite as usual. Do not install both packages together.
+
+## Usage
+
+Use the `Minify` facade in Blade templates. Pass a path relative to `public/`, an array of paths, or—where appropriate—an external HTTP(S) URL.
+
+### Stylesheets
+
+```blade
+<head>
+    {!! Minify::stylesheet('/css/main.css') !!}
+
+    {{-- Combine multiple files. --}}
+    {!! Minify::stylesheet(['/css/main.css', '/css/theme.css']) !!}
+
+    {{-- Add attributes to the generated link. --}}
+    {!! Minify::stylesheet('/css/main.css', ['media' => 'print']) !!}
+
+    {{-- Produce an absolute asset URL. --}}
+    {!! Minify::stylesheet('/css/main.css')->withFullUrl() !!}
+
+    {{-- Return only the generated build URL. --}}
+    {{ Minify::stylesheet('/css/main.css')->onlyUrl() }}
+</head>
+```
+
+Native CSS custom properties are supported and are preserved during minification:
+
+```css
+:root {
+    --brand-color: #2563eb;
+}
+
+.button {
+    color: var(--brand-color);
 }
 ```
 
-After the package installation, the `MinifyServiceProvider` and `Minify` facade are automatically registered.
-You can use the `Minify` facade anywhere in your application.
+### JavaScript
 
-To publish the config file:
+```blade
+<body>
+    {{-- Your page content. --}}
 
-```shell
-php artisan vendor:publish --provider="Devfactory\Minify\MinifyServiceProvider" --tag="config"
+    {!! Minify::javascript('/js/app.js') !!}
+    {!! Minify::javascript(['/js/vendor.js', '/js/app.js'], ['defer' => true]) !!}
+    {!! Minify::javascript('/js/app.js')->withFullUrl() !!}
+</body>
 ```
 
+### Whole directories
 
-## Upgrade to v2
-Minify version 2 is PHP 8.1+ and Laravel 10+ only.
+`stylesheetDir()` and `javascriptDir()` recursively collect matching files below a directory, combine them, and return one tag. File order is controlled by `reverse_sort` in the configuration, so set it deliberately when files depend on one another.
 
-### Required upgrade changes
-If the [`Devfactory\Minify\Contracts\MinifyInterface`](src/Contracts/MinifyInterface.php) interface is implemented,
-make sure update your implementation according to the updated types and exceptions.
-
-If the [`Devfactory\Minify\Providers\BaseProvider`](src/Providers/BaseProvider.php) abstract class is used,
-make sure update your classes according to the updated types and exceptions.
-
-The method `Devfactory\Minify\Providers\StyleSheet#urlCorrection` has been renamed to `Devfactory\Minify\Providers\StyleSheet#getFileContentWithCorrectedUrls`.
-
-Rename the `minify.config.php` configuration file to `minify.php`.
-
-## Usage
-### Stylesheet
-
-```php
-// app/views/hello.blade.php
-
-<html>
-    <head>
-        ...
-        {!! Minify::stylesheet('/css/main.css') !!}
-        // or by passing multiple files
-        {!! Minify::stylesheet(['/css/main.css', '/css/bootstrap.css']) !!}
-        // add custom attributes
-        {!! Minify::stylesheet(['/css/main.css', '/css/bootstrap.css'], ['foo' => 'bar']) !!}
-        // add full uri of the resource
-        {!! Minify::stylesheet(['/css/main.css', '/css/bootstrap.css'])->withFullUrl() !!}
-        {!! Minify::stylesheet(['//fonts.googleapis.com/css?family=Roboto']) !!}
-
-        // minify and combine all stylesheet files in given folder
-        {!! Minify::stylesheetDir('/css/') !!}
-        // add custom attributes to minify and combine all stylesheet files in given folder
-        {!! Minify::stylesheetDir('/css/', ['foo' => 'bar', 'defer' => true]) !!}
-        // minify and combine all stylesheet files in given folder with full uri
-        {!! Minify::stylesheetDir('/css/')->withFullUrl() !!}
-    </head>
-    ...
-</html>
+```blade
+{!! Minify::stylesheetDir('/css/') !!}
+{!! Minify::javascriptDir('/js/', ['defer' => true]) !!}
 ```
 
-### Javascript
+## Configuration
 
-```php
-// app/views/hello.blade.php
+The published `config/minify.php` contains these options:
 
-<html>
-    <body>
-    ...
-    </body>
-    {!! Minify::javascript('/js/jquery.js') !!}
-    // or by passing multiple files
-    {!! Minify::javascript(['/js/jquery.js', '/js/jquery-ui.js']) !!}
-    // add custom attributes
-    {!! Minify::javascript(['/js/jquery.js', '/js/jquery-ui.js'], ['bar' => 'baz']) !!}
-    // add full uri of the resource
-    {!! Minify::javascript(['/js/jquery.js', '/js/jquery-ui.js'])->withFullUrl() !!}
-    {!! Minify::javascript(['//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js']) !!}
+| Option | Default | Purpose |
+| --- | --- | --- |
+| `reverse_sort` | `true` | Sort directory files in descending order before combining them. |
+| `ignore_environments` | `['local']` | Return separate original-file tags instead of creating a minified build. |
+| `css_build_path` / `js_build_path` | `/css/builds/` / `/js/builds/` | Directories, relative to `public/`, where generated files are written. |
+| `css_url_path` / `js_url_path` | same as the corresponding build path | Public URL paths used in generated tags; useful when the filesystem path and public URL differ. |
+| `disable_mtime` | `false` | Exclude source modification times from generated filenames. |
+| `hash_salt` | `''` | Append an application-specific value to generated filename hashes. |
+| `base_url` | `''` | Base URL used by `withFullUrl()`; when empty, Laravel's request root is used. |
 
-    // minify and combine all javascript files in given folder
-    {!! Minify::javascriptDir('/js/') !!}
-    // add custom attributes to minify and combine all javascript files in given folder
-    {!! Minify::javascriptDir('/js/', ['bar' => 'baz', 'async' => true]) !!}
-    // minify and combine all javascript files in given folder with full uri
-    {!! Minify::javascriptDir('/js/')->withFullUrl() !!}
-</html>
-```
+Generated asset filenames incorporate their source paths and, by default, source modification times. A source change therefore produces a new filename suitable for long-lived HTTP caching. If you disable modification times, set `hash_salt` to a value that changes with each deployment or asset release.
+
+## Operational notes
+
+- Generated files are written on demand. The web process needs permission to create and replace files in the configured build directories.
+- Add the generated build directories to your deployment strategy as appropriate. They can be generated again, but they should not be treated as hand-authored source files.
+- External URLs are fetched by the server and included in the generated build. Prefer locally managed assets when availability, privacy, or repeatable deployments matter.
+- Test output after upgrading either CSS or JavaScript minifier dependencies, especially for syntax produced by newer build tools.
+
+## Maintenance and releases
+
+This fork is maintained by Qdev Tech for ongoing use in its Laravel projects and will be released through Packagist under `theqdev/laravel-minify`. Please report reproducible issues and compatibility requests in the [GitHub issue tracker](https://github.com/theqdev/laravel-minify/issues).
+
+## License
+
+Laravel Minify is open-sourced software licensed under the [MIT license](LICENSE).
