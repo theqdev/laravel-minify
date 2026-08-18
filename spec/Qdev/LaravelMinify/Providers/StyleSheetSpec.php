@@ -1,9 +1,9 @@
-<?php namespace spec\Devfactory\Minify\Providers;
+<?php namespace spec\Qdev\LaravelMinify\Providers;
 
-use Devfactory\Minify\Exceptions\DirNotExistException;
-use Devfactory\Minify\Exceptions\DirNotWritableException;
-use Devfactory\Minify\Exceptions\FileNotExistException;
-use Devfactory\Minify\Providers\StyleSheet;
+use Qdev\LaravelMinify\Exceptions\DirNotExistException;
+use Qdev\LaravelMinify\Exceptions\DirNotWritableException;
+use Qdev\LaravelMinify\Exceptions\FileNotExistException;
+use Qdev\LaravelMinify\Providers\StyleSheet;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Prophet;
 use org\bovigo\vfs\vfsStream;

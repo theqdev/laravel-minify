@@ -1,13 +1,13 @@
-<?php namespace Devfactory\Minify;
+<?php namespace Qdev\LaravelMinify;
 
-use Devfactory\Minify\Exceptions\CannotRemoveFileException;
-use Devfactory\Minify\Exceptions\CannotSaveFileException;
-use Devfactory\Minify\Exceptions\DirNotExistException;
-use Devfactory\Minify\Exceptions\DirNotWritableException;
-use Devfactory\Minify\Exceptions\FileNotExistException;
-use Devfactory\Minify\Exceptions\InvalidArgumentException;
-use Devfactory\Minify\Providers\JavaScript;
-use Devfactory\Minify\Providers\StyleSheet;
+use Qdev\LaravelMinify\Exceptions\CannotRemoveFileException;
+use Qdev\LaravelMinify\Exceptions\CannotSaveFileException;
+use Qdev\LaravelMinify\Exceptions\DirNotExistException;
+use Qdev\LaravelMinify\Exceptions\DirNotWritableException;
+use Qdev\LaravelMinify\Exceptions\FileNotExistException;
+use Qdev\LaravelMinify\Exceptions\InvalidArgumentException;
+use Qdev\LaravelMinify\Providers\JavaScript;
+use Qdev\LaravelMinify\Providers\StyleSheet;
 use FilesystemIterator;
 use Illuminate\Support\Facades\Request;
 use RecursiveDirectoryIterator;

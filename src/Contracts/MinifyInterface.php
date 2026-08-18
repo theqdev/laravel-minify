@@ -1,6 +1,6 @@
-<?php namespace Devfactory\Minify\Contracts;
+<?php namespace Qdev\LaravelMinify\Contracts;
 
-use Devfactory\Minify\Exceptions\CannotSaveFileException;
+use Qdev\LaravelMinify\Exceptions\CannotSaveFileException;
 
 interface MinifyInterface {
     /**

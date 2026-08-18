@@ -1,4 +1,4 @@
-<?php  namespace Devfactory\Minify\Exceptions;
+<?php  namespace Qdev\LaravelMinify\Exceptions;
 
 use Exception;
 
