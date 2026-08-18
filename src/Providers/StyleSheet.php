@@ -13,7 +13,11 @@ class StyleSheet extends BaseProvider implements MinifyInterface
 
     public function minify(): string
     {
-        $minified = new CssMinifier($this->appended);
+        $minified = new CssMinifier(
+            $this->appended,
+            ['Variables' => false],
+            ['Variables' => false]
+        );
 
         return $this->put($minified->getMinified());
     }
