@@ -1,4 +1,4 @@
-<?php namespace Devfactory\Minify;
+<?php namespace Qdev\LaravelMinify;
 
 use Illuminate\Support\ServiceProvider;
 

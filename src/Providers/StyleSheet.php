@@ -1,8 +1,8 @@
-<?php namespace Devfactory\Minify\Providers;
+<?php namespace Qdev\LaravelMinify\Providers;
 
 use CssMinifier;
-use Devfactory\Minify\Contracts\MinifyInterface;
-use Devfactory\Minify\Exceptions\FileNotExistException;
+use Qdev\LaravelMinify\Contracts\MinifyInterface;
+use Qdev\LaravelMinify\Exceptions\FileNotExistException;
 
 class StyleSheet extends BaseProvider implements MinifyInterface
 {

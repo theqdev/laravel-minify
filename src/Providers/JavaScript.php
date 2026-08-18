@@ -1,6 +1,6 @@
-<?php namespace Devfactory\Minify\Providers;
+<?php namespace Qdev\LaravelMinify\Providers;
 
-use Devfactory\Minify\Contracts\MinifyInterface;
+use Qdev\LaravelMinify\Contracts\MinifyInterface;
 use Exception;
 use JShrink\Minifier;
 

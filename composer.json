@@ -2,7 +2,9 @@
     "name": "theqdev/laravel-minify",
     "keywords": [
         "minify",
-        "laravel5"
+        "laravel",
+        "css",
+        "javascript"
     ],
     "description": "A package for minifying styles and javascript for Laravel",
     "license": "MIT",
@@ -24,21 +26,18 @@
         "mikey179/vfsstream": "^1.6"
     },
     "autoload": {
-        "psr-0": {
-            "": "src/"
-        },
         "psr-4": {
-            "Devfactory\\Minify\\": "src/"
+            "Qdev\\LaravelMinify\\": "src/"
         }
     },
     "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [
-                "Devfactory\\Minify\\MinifyServiceProvider"
+                "Qdev\\LaravelMinify\\MinifyServiceProvider"
             ],
             "aliases": {
-                "Minify": "Devfactory\\Minify\\Facades\\MinifyFacade"
+                "Minify": "Qdev\\LaravelMinify\\Facades\\MinifyFacade"
             }
         }
     }

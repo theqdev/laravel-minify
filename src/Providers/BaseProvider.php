@@ -1,10 +1,10 @@
-<?php namespace Devfactory\Minify\Providers;
+<?php namespace Qdev\LaravelMinify\Providers;
 
-use Devfactory\Minify\Exceptions\CannotRemoveFileException;
-use Devfactory\Minify\Exceptions\CannotSaveFileException;
-use Devfactory\Minify\Exceptions\DirNotExistException;
-use Devfactory\Minify\Exceptions\DirNotWritableException;
-use Devfactory\Minify\Exceptions\FileNotExistException;
+use Qdev\LaravelMinify\Exceptions\CannotRemoveFileException;
+use Qdev\LaravelMinify\Exceptions\CannotSaveFileException;
+use Qdev\LaravelMinify\Exceptions\DirNotExistException;
+use Qdev\LaravelMinify\Exceptions\DirNotWritableException;
+use Qdev\LaravelMinify\Exceptions\FileNotExistException;
 use Illuminate\Filesystem\Filesystem;
 use Countable;
 

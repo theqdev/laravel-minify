@@ -8,7 +8,7 @@ This is a maintained fork of [DevFactoryCH/minify](https://github.com/DevFactory
 
 The upstream package enables the CSS minifier's legacy variable processor. That processor is not needed by this project and can interfere with modern native CSS custom properties such as `--brand-color` and `var(--brand-color)`. This fork disables that processor so native CSS custom properties are not interpreted as legacy variable syntax during minification.
 
-The public PHP namespace remains `Devfactory\\Minify` for compatibility with existing applications. This is intentional; use the package name above when installing it with Composer.
+The public PHP namespace is `Qdev\\LaravelMinify`. The Blade-facing `Minify` facade name remains unchanged.
 
 ## Requirements
 
@@ -27,26 +27,26 @@ Install the package with Composer:
 composer require theqdev/laravel-minify
 ```
 
-Laravel package discovery registers the service provider and `Minify` facade automatically. If package discovery is disabled, register `Devfactory\\Minify\\MinifyServiceProvider` and the `Devfactory\\Minify\\Facades\\MinifyFacade` facade in your application.
+Laravel package discovery registers the service provider and `Minify` facade automatically. If package discovery is disabled, register `Qdev\\LaravelMinify\\MinifyServiceProvider` and the `Qdev\\LaravelMinify\\Facades\\MinifyFacade` facade in your application.
 
 Publish the configuration file if you need to change the defaults:
 
 ```shell
-php artisan vendor:publish --provider="Devfactory\\Minify\\MinifyServiceProvider" --tag=config
+php artisan vendor:publish --provider="Qdev\\LaravelMinify\\MinifyServiceProvider" --tag=config
 ```
 
 This creates `config/minify.php`. Make sure the configured build directories exist, or can be created, and are writable by the PHP process in deployed environments.
 
 ### Moving from the upstream package
 
-The fork keeps the same namespace, facade name, configuration keys, and Blade API as the upstream v2 package. To replace it in an existing application, remove the upstream Composer package and then require this one:
+The fork keeps the same `Minify` facade name, configuration keys, and Blade API as the upstream v2 package. To replace it in an existing application, remove the upstream Composer package and then require this one:
 
 ```shell
 composer remove devfactory/minify
 composer require theqdev/laravel-minify
 ```
 
-Review your dependency lock file and run your application test suite as usual. Do not install both packages together.
+Update direct PHP imports and any manual provider or facade registrations from `Devfactory\\Minify` to `Qdev\\LaravelMinify`. Review your dependency lock file and run your application test suite as usual. Do not install both packages together.
 
 ## Usage
 

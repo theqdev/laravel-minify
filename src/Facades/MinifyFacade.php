@@ -1,4 +1,4 @@
-<?php namespace Devfactory\Minify\Facades;
+<?php namespace Qdev\LaravelMinify\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
